@@ -22,9 +22,11 @@ namespace ProductApi.Services
             };
             using var producer = new ProducerBuilder<Null, string>(config).Build();
             var deliveryResult = await producer.ProduceAsync("test-topic", new Message<Null, string> { Value = "test" });
-            logger.LogInformation($"Delivered '{deliveryResult.Value}' to '{deliveryResult.TopicPartitionOffset}'");
+            logger.LogInformation($"Delivered {DateTime.Now} '{deliveryResult.Value}' to '{deliveryResult.TopicPartitionOffset}'");
 
             await Task.CompletedTask;
+            producer.Flush(TimeSpan.FromSeconds(10));
+            producer.Dispose();
         }
     }
 
